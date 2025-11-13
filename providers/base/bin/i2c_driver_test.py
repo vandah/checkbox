@@ -54,31 +54,22 @@ class Device:
         # Make sure that we have root privileges
         if os.geteuid() != 0:
             raise SystemExit("Error: please run this command as root")
-        # Calculate number of buses
-        result = subprocess.check_output(
-            ["i2cdetect", "-l"], universal_newlines=True
-        )
-        detected_i2c_bus = []
-        for line in result.splitlines():
-            detected_i2c_bus.append(line.split("\t")[0].split("-")[1])
-        print("Detected buses: {}".format(detected_i2c_bus))
 
-        # Detect device on each bus
         exit_code = 1
-        for i in detected_i2c_bus:
-            print("Checking I2C bus {}".format(i))
-            result = subprocess.check_output(
-                ["i2cdetect", "-y", "-r", str(i)], universal_newlines=True
-            )
-            print(result)
-            result_lines = result.splitlines()[1:]
-            for r in result_lines:
-                address_value = r.strip("\n").split(":")[1].split()
-                for v in address_value:
-                    if v != "--":
-                        exit_code = 0
+        bus_number = args.device.split("-")[1]
+        print("Checking I2C bus {}".format(bus_number))
+        result = subprocess.check_output(
+            ["i2cdetect", "-y", "-r", str(bus_number)], universal_newlines=True
+        )
+        print(result)
+        result_lines = result.splitlines()[1:]
+        for r in result_lines:
+            address_value = r.strip("\n").split(":")[1].split()
+            for v in address_value:
+                if v != "--":
+                    exit_code = 0
         if exit_code == 1:
-            raise SystemExit("No I2C device detected on any I2C bus")
+            raise SystemExit("No I2C device detected on this I2C bus")
         print("I2C device detected")
 
 
@@ -95,6 +86,13 @@ class I2cDriverTest:
             type=int,
             default=0,
             help="Expected number of I2C bus.",
+        )
+        parser.add_argument(
+            "-d",
+            "--device",
+            type=str,
+            default="",
+            help="I2C bus id.",
         )
         args = parser.parse_args()
         subcommands[args.subcommand]().invoked(args)

@@ -25,15 +25,20 @@ estimated_duration: 20s
 requires: manifest.has_i2c == 'True'
 imports: from com.canonical.plainbox import manifest
 
-unit: job
-id: i2c/i2c-device-detect
+
+unit: template
+template-resource: i2c/i2c-bus
+template-unit: job
+id: i2c/i2c-device-detect-{id}
 _summary: Check if any I²C devices can be detected
 _purpose:
   The test will pass if there's at least one I²C device detected on any I²C bus.
 command:
-  i2c_driver_test.py device
+  i2c_driver_test.py -d {id} device
 user: root
 plugin: shell
 category_id: i2c
 estimated_duration: 3m
-depends: i2c/i2c-bus-detect
+depends:
+    i2c/i2c-bus
+    i2c/i2c-bus-detect

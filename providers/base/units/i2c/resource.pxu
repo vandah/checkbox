@@ -1,0 +1,6 @@
+plugin: resource
+id: i2c/i2c-bus
+command: i2c_driver_resource.py
+summary: Get the list of available i2c busses
+user: root
+category_id: i2c

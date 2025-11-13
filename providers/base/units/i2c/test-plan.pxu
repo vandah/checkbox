@@ -17,6 +17,8 @@ id: i2c-automated
 unit: test plan
 _name: Automated I²C tests
 _description: Automated I²C tests for Ubuntu Core devices
+bootstrap_include:
+    com.canonical.certification::i2c/i2c-bus 
 include:
     i2c/i2c-bus-detect       certification-status=blocker
     i2c/i2c-device-detect    certification-status=blocker
